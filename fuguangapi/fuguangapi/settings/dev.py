@@ -9,12 +9,15 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-
+import os
 from pathlib import Path
+from dotenv import load_dotenv
+
+# 加载 .env 文件中的环境变量
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -26,7 +29,6 @@ SECRET_KEY = 'django-insecure-eznjvxi)dl&lp8(&ijsprjv1luf-g&i8dyrn@t(1la)k@p4c&j
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -69,17 +71,31 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'fuguangapi.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # }
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        # 'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'dj_db_conn_pool.backends.mysql',
+        'NAME': os.getenv('MYSQL_DATABASE_FUGUANG_NAME'),
+        'PORT': os.getenv('MYSQL_DATABASE_FUGUANG_PORT'),
+        'HOST': os.getenv('MYSQL_DATABASE_FUGUANG_HOST'),
+        'USER': os.getenv('MYSQL_DATABASE_FUGUANG_USER'),
+        'PASSWORD': os.getenv('MYSQL_DATABASE_FUGUANG_PASSWORD'),
+        'OPTIONS': {
+            'charset': 'utf8mb4',  # 连接选项配置,mysql8.0以上无需配置
+        },
+        'POOL_OPTIONS': {  # 连接池的配置信息
+            'POOL_SIZE': 10,  # 连接池默认创建的链接对象的数量
+            'MAX_OVERFLOW': 10  # 连接池默认创建的链接对象的最大数量
+        }
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -99,7 +115,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
@@ -110,7 +125,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
@@ -149,12 +163,12 @@ LOGGING = {
             '()': 'django.utils.log.RequireDebugTrue',
         },
     },
-    'handlers': { # 日志处理流程，console或者mail_admins都是自定义的。
+    'handlers': {  # 日志处理流程，console或者mail_admins都是自定义的。
         'console': {
-            'level': 'DEBUG', # 设置当前日志处理流程中的日志最低等级
-            'filters': ['require_debug_true'], # 当前日志处理流程的日志过滤
+            'level': 'DEBUG',  # 设置当前日志处理流程中的日志最低等级
+            'filters': ['require_debug_true'],  # 当前日志处理流程的日志过滤
             'class': 'logging.StreamHandler',  # 当前日志处理流程的核心类，StreamHandler可以帮我们把日志信息输出到终端下
-            'formatter': 'simple'              # 当前日志处理流程的日志格式
+            'formatter': 'simple'  # 当前日志处理流程的日志格式
         },
         # 'mail_admins': {
         #     'level': 'ERROR',                  # 设置当前日志处理流程中的日志最低等级
@@ -177,8 +191,8 @@ LOGGING = {
     },
     'loggers': {  # 日志处理的命名空间
         'django': {  # 要在django中调用当前配置项的loging写入日志到文件中，名字必须叫"django"
-            'handlers': ['console','file'],  # 当基于django命名空间写入日志时，调用那几个日志处理流程
-            'propagate': True,   # 是否在django命名空间对应的日志处理流程结束以后，冒泡通知其他的日志功能。True表示允许
+            'handlers': ['console', 'file'],  # 当基于django命名空间写入日志时，调用那几个日志处理流程
+            'propagate': True,  # 是否在django命名空间对应的日志处理流程结束以后，冒泡通知其他的日志功能。True表示允许
         },
     }
 }
