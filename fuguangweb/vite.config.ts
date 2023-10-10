@@ -12,6 +12,22 @@ const pathSrc = path.resolve(__dirname, 'src')
 
 // https://vitejs.dev/config/
 export default defineConfig({
+    server: {
+        port: 3000,           // 客户端的运行端口，此处也可以绑定vue运行的端口，当然也可以写在pycharm下
+        host: 'www.fuguang.cn', // 客户端的运行地址，此处也可以绑定vue运行的域名，当然也可以写在pycharm下
+        proxy: {
+            // 字符串简写写法：http://localhost:5173/foo -> http://localhost:4567/foo
+            // '/foo': 'http://localhost:4567',
+            // '/foo': loadEnv("", process.cwd()).VITE_API_URL,
+            // 带选项写法：http://localhost:5173/api/bar -> http://jsonplaceholder.typicode.com/bar
+            '/api': {
+                target: 'http://api.fuguang.cn:8000/',
+                changeOrigin: true,
+                 ws: true,    // 是否支持websocket跨域
+                rewrite: (path) => path.replace(/^\/api/, ''),
+            },
+        }
+    },
     resolve: {
         alias: {
             '@': pathSrc,

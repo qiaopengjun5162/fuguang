@@ -32,7 +32,7 @@ SECRET_KEY = 'django-insecure-eznjvxi)dl&lp8(&ijsprjv1luf-g&i8dyrn@t(1la)k@p4c&j
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 # Application definition
 
@@ -45,10 +45,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
+    'corsheaders', # cors跨域子应用
+
     'home',
 ]
 
 MIDDLEWARE = [
+    # 'corsheaders.middleware.CorsMiddleware',  # cors跨域的中间件
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -245,3 +248,13 @@ REST_FRAMEWORK = {
     # 自定义异常处理
     'EXCEPTION_HANDLER': 'fuguangapi.utils.exceptions.custom_exception_handler',
 }
+
+# CORS的配置信息:
+# 方案1：
+# CORS_ORIGIN_WHITELIST = (
+#     'http://www.fuguang.cn:3000',
+# )
+# CORS_ALLOW_CREDENTIALS = False  # 不允许ajax跨域请求时携带cookie
+
+# 方案2：
+CORS_ALLOW_ALL_ORIGINS = True
