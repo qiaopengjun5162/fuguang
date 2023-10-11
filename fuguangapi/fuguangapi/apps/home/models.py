@@ -1,4 +1,5 @@
 from fuguangapi.utils.models import BaseModel, models
+# from models import BaseModel, models
 
 # Create your models here.
 
