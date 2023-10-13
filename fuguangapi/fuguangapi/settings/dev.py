@@ -47,6 +47,8 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'corsheaders', # cors跨域子应用
+    # 'rest_framework_swagger',  # swagger接口文档
+    'drf_yasg',  # 接口文档drf_yasg
 
     'home',
 ]
@@ -175,8 +177,18 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
-
+# 访问静态文件的url地址前缀
 STATIC_URL = 'static/'
+
+# 设置django的静态文件目录[手动创建]
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
+
+# 项目中存储上传文件的根目录[手动创建]，注意，uploads目录需要手动创建否则上传文件时报错
+MEDIA_ROOT = BASE_DIR / "uploads"
+# 访问上传文件的url地址前缀
+MEDIA_URL = "/uploads/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -248,6 +260,7 @@ LOGGING = {
 REST_FRAMEWORK = {
     # 自定义异常处理
     'EXCEPTION_HANDLER': 'fuguangapi.utils.exceptions.custom_exception_handler',
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema'
 }
 
 # CORS的配置信息:
@@ -259,3 +272,26 @@ REST_FRAMEWORK = {
 
 # 方案2：
 CORS_ALLOW_ALL_ORIGINS = True
+
+# SWAGGER_SETTINGS = {
+#     # 基础样式
+#     'SECURITY_DEFINITIONS': {
+#         "basic": {
+#             'type': 'basic'
+#         }
+#     },
+#     # 如果需要登录才能够查看接口文档, 登录的链接使用restframework自带的.
+#     'LOGIN_URL': 'rest_framework:login',
+#     'LOGOUT_URL': 'rest_framework:logout',
+#     # 'DOC_EXPANSION': None,
+#     # 'SHOW_REQUEST_HEADERS':True,
+#     # 'USE_SESSION_AUTH': True,
+#     # 'DOC_EXPANSION': 'list',
+#     # 接口文档中方法列表以首字母升序排列
+#     'APIS_SORTER': 'alpha',
+#     # 如果支持json提交, 则接口文档中包含json输入框
+#     'JSON_EDITOR': True,
+#     # 方法列表字母排序
+#     'OPERATIONS_SORTER': 'alpha',
+#     'VALIDATOR_URL': None,
+# }

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Header from "../components/Header.vue"
-import Footer from "../components/Footer.vue"
+import Footer from "@/components/Footer.vue"
+import Banner from "@/components/Banner.vue"
 
 // 测试CORS的跨域配置是否有问题
 // import http from "../utils/http";
@@ -17,9 +18,11 @@ import Footer from "../components/Footer.vue"
 </script>
 
 <template>
- <div class="home">
+  <div class="home">
     <Header></Header>
-
+    <div id="main">
+      <Banner></Banner>
+    </div>
     <Footer></Footer>
   </div>
 </template>
