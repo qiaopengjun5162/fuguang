@@ -1,7 +1,8 @@
 import constants
-from rest_framework.generics import ListAPIView
+# from rest_framework.generics import ListAPIView
 from .models import Nav, Banner
 from .serializers import NavModelSerializer, BannerModelSerializer
+from views import ListAPIView
 
 
 class HeaderNavListAPIView(ListAPIView):
