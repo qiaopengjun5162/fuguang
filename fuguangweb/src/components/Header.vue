@@ -1,5 +1,12 @@
 <script setup lang="ts">
+import nav from "../api/nav";
 
+// 获取头部导航
+nav.get_header_nav().then(response => {
+  nav.header_nav_list = response.data;
+}).catch(error => {
+  console.log(error);
+});
 </script>
 
 <template>
@@ -10,21 +17,26 @@
           <router-link to="/"><img src="../assets/logo.png" alt=""></router-link>
         </div>
         <ul class="nav">
-          <li>
-            <router-link to="">免费课</router-link>
+          <li v-for="item in nav.header_nav_list">
+            <a :href="item.link" v-if="item.is_http">{{ item.name }}</a>
+            <router-link :to="item.link" v-else>{{ item.name }}</router-link>
           </li>
-          <li>
-            <router-link to="">项目课</router-link>
-          </li>
-          <li>
-            <router-link to="">学位课</router-link>
-          </li>
-          <li>
-            <router-link to="">习题库</router-link>
-          </li>
-          <li>
-            <router-link to="">老男孩教育</router-link>
-          </li>
+
+          <!--          <li>-->
+          <!--            <router-link to="">免费课</router-link>-->
+          <!--          </li>-->
+          <!--          <li>-->
+          <!--            <router-link to="">项目课</router-link>-->
+          <!--          </li>-->
+          <!--          <li>-->
+          <!--            <router-link to="">学位课</router-link>-->
+          <!--          </li>-->
+          <!--          <li>-->
+          <!--            <router-link to="">习题库</router-link>-->
+          <!--          </li>-->
+          <!--          <li>-->
+          <!--            <router-link to="">老男孩教育</router-link>-->
+          <!--          </li>-->
         </ul>
         <div class="search-warp">
           <div class="search-area">
