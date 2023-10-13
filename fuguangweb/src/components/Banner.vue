@@ -1,15 +1,16 @@
 <script setup lang="ts">
+import banner from "../api/banner";
 import {reactive} from "vue"
 
 const state = reactive({
   current_menu: -1,
-  banner_list: [
-    {"id": 1, image: "http://fuguangapi.oss-cn-beijing.aliyuncs.com/1.jpg",},
-    {"id": 2, image: "http://fuguangapi.oss-cn-beijing.aliyuncs.com/2.jpg",},
-    {"id": 3, image: "http://fuguangapi.oss-cn-beijing.aliyuncs.com/3.jpg",},
-    {"id": 4, image: "http://fuguangapi.oss-cn-beijing.aliyuncs.com/4.jpg",},
-    {"id": 5, image: "http://fuguangapi.oss-cn-beijing.aliyuncs.com/5.jpg",},
-  ]
+})
+
+banner.get_banner().then(response => {
+  banner.banner_list = response.data;
+  console.log("banner_list", banner.banner_list)
+}).catch(error => {
+  console.log(error);
 })
 </script>
 
@@ -310,9 +311,17 @@ const state = reactive({
       <!-- 轮播图-->
       <div class="g-banner-content" @mouseover="state.current_menu=-1">
         <el-carousel :interval="5000" arrow="always" height="382px">
-          <el-carousel-item v-for="banner in state.banner_list" :key="banner.id">
-            <img :src="banner.image" alt="" style="width: 100%;height: 100%;">
+          <el-carousel-item v-for="(item,key) in banner.banner_list" :key="key">
+            <a :href="item.link" v-if="item.is_http"><img :src="item.image" alt=""
+                                                          style="width: 100%;height: 100%;"></a>
+            <router-link :to="item.link" v-else><img :src="item.image" alt="" style="width: 100%;height: 100%;">
+            </router-link>
           </el-carousel-item>
+
+
+          <!--          <el-carousel-item v-for="banner in state.banner_list" :key="banner.id">-->
+          <!--            <img :src="banner.image" alt="" style="width: 100%;height: 100%;">-->
+          <!--          </el-carousel-item>-->
         </el-carousel>
       </div>
     </div>

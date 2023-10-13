@@ -1,4 +1,4 @@
-import axios from "axios"
+import axios, { AxiosRequestHeaders }  from "axios"
 
 const http = axios.create({
     // timeout: 2500,                          // 请求超时，有大文件上传需要关闭这个配置
@@ -9,6 +9,9 @@ const http = axios.create({
 // 请求拦截器
 http.interceptors.request.use((config) => {
     console.log("http请求之前");
+     if (!config.headers) {
+        config.headers = {} as AxiosRequestHeaders
+    }
     return config;
 }, (error) => {
     console.log("http请求错误");
