@@ -1,5 +1,5 @@
 import http from "../utils/http";
-import {ref, reactive} from "vue";
+import { reactive} from "vue";
 
 
 // type BannerList = [

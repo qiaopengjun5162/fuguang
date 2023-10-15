@@ -1,5 +1,10 @@
 <script setup lang="ts">
 import nav from "../api/nav";
+import Login from "./Login.vue"
+
+const state = reactive({
+  show_login: false,
+})
 
 // 获取头部导航
 nav.get_header_nav().then(response => {
@@ -22,21 +27,6 @@ nav.get_header_nav().then(response => {
             <router-link :to="item.link" v-else>{{ item.name }}</router-link>
           </li>
 
-          <!--          <li>-->
-          <!--            <router-link to="">免费课</router-link>-->
-          <!--          </li>-->
-          <!--          <li>-->
-          <!--            <router-link to="">项目课</router-link>-->
-          <!--          </li>-->
-          <!--          <li>-->
-          <!--            <router-link to="">学位课</router-link>-->
-          <!--          </li>-->
-          <!--          <li>-->
-          <!--            <router-link to="">习题库</router-link>-->
-          <!--          </li>-->
-          <!--          <li>-->
-          <!--            <router-link to="">老男孩教育</router-link>-->
-          <!--          </li>-->
         </ul>
         <div class="search-warp">
           <div class="search-area">
@@ -54,7 +44,7 @@ nav.get_header_nav().then(response => {
             <span><router-link to="/cart">购物车</router-link></span>
           </div>
           <div class="login-box full-left">
-            <span>登录</span>
+            <span @click="state.show_login=true">登录</span>
             &nbsp;/&nbsp;
             <span>注册</span>
           </div>
@@ -62,6 +52,9 @@ nav.get_header_nav().then(response => {
       </div>
     </div>
   </div>
+  <el-dialog :width="600" v-model="state.show_login">
+    <Login></Login>
+  </el-dialog>
 </template>
 
 <style scoped>
