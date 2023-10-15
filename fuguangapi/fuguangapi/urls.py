@@ -27,7 +27,6 @@ from django.views.static import serve  # 静态文件代理访问模块
 
 from rest_framework.documentation import include_docs_urls
 
-
 # yasg的视图配置类，用于生成api
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
@@ -38,11 +37,11 @@ schema_view = get_schema_view(
         title="drf接口文档",  # 站点标题，必填
         default_version='v1.0,0',  # api版本，必填
         description="描述信息",  # 站点描述
-        terms_of_service='htttp://www.moluo.net/',   # 团队博客网址
-        contact=openapi.Contact(name="qiao", url="htttp://www.qiao.net/", email="1746259155@qq.com"), # 联系邮箱地址
-        license=openapi.License(name="开源协议名称", url="开源协议网地") # 协议
+        terms_of_service='htttp://www.moluo.net/',  # 团队博客网址
+        contact=openapi.Contact(name="qiao", url="htttp://www.qiao.net/", email="1746259155@qq.com"),  # 联系邮箱地址
+        license=openapi.License(name="开源协议名称", url="开源协议网地")  # 协议
     ),
-    public=True, # 是否外部站点
+    public=True,  # 是否外部站点
     # permission_classes=(rest_framework.permissions.AllowAny)  # 权限类
 )
 
@@ -58,4 +57,5 @@ urlpatterns = [
 
     re_path(r'uploads/(?P<path>.*)', serve, {"document_root": settings.MEDIA_ROOT}),
     path('', include("home.urls")),
+    path("users/", include("users.urls")),
 ]

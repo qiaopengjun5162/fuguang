@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'drf_yasg',  # 接口文档drf_yasg
 
     'home',
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -295,3 +296,8 @@ CORS_ALLOW_ALL_ORIGINS = True
 #     'OPERATIONS_SORTER': 'alpha',
 #     'VALIDATOR_URL': None,
 # }
+
+# 自定义的用户模型类
+# `AUTH_USER_MODEL` 参数的设置以`点.`来分隔，表示`应用名.模型类名`。
+# 注意：Django建议我们对于AUTH_USER_MODEL参数的设置一定要在第一次数据库迁移之前就设置好，否则后续使用可能出现未知错误。
+AUTH_USER_MODEL = 'users.User'
