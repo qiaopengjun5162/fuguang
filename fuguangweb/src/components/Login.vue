@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import user from "../api/user";
-import { ElMessage } from 'element-plus'
+import {ElMessage} from 'element-plus'
+
+const emit = defineEmits(["login_success",])
 
 // 登录处理
 const loginhandler = () => {
+  // 登录处理
   if (user.account.length < 1 || user.password.length < 1) {
     // 错误提示
-    console.log("错了哦，用户名或密码不能为空！");
     ElMessage.error('错了哦，用户名或密码不能为空！');
     return false;  // 在函数/方法中，可以阻止代码继续往下执行
   }
@@ -16,22 +18,29 @@ const loginhandler = () => {
     username: user.account,
     password: user.password
   }).then(response => {
-     // 保存token，并根据用户的选择，是否记住密码
+    // 保存token，并根据用户的选择，是否记住密码
     localStorage.removeItem("token");
     sessionStorage.removeItem("token");
     console.log(response.data.access);
-      if(user.remember){ // 判断是否记住登录状态
+    if (user.remember) { // 判断是否记住登录状态
       // 记住登录
       localStorage.token = response.data.access
-    }else{
+    } else {
       // 不记住登录，关闭浏览器以后就删除状态
       sessionStorage.token = response.data.access;
     }
     // 保存token，并根据用户的选择，是否记住密码
     // 成功提示
     ElMessage.success("登录成功！");
-    console.log("登录成功！");
+    // 关闭登录弹窗，对外发送一个登录成功的信息
+    user.account = ""
+    user.password = ""
+    user.mobile = ""
+    user.code = ""
+    user.remember = false
+    emit("login_success")
   }).catch(error => {
+    ElMessage.error("登录异常！")
     console.log(error);
   })
 }
