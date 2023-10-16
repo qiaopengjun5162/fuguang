@@ -1,35 +1,64 @@
 <script setup lang="ts">
-import {reactive} from "vue";
+import user from "../api/user";
+import { ElMessage } from 'element-plus'
 
-const state = reactive({
-  login_type: 0,
-  username: "",
-  password: "",
-})
+// 登录处理
+const loginhandler = () => {
+  if (user.account.length < 1 || user.password.length < 1) {
+    // 错误提示
+    console.log("错了哦，用户名或密码不能为空！");
+    ElMessage.error('错了哦，用户名或密码不能为空！');
+    return false;  // 在函数/方法中，可以阻止代码继续往下执行
+  }
+
+  // 发送请求
+  user.login({
+    username: user.account,
+    password: user.password
+  }).then(response => {
+     // 保存token，并根据用户的选择，是否记住密码
+    localStorage.removeItem("token");
+    sessionStorage.removeItem("token");
+    console.log(response.data.access);
+      if(user.remember){ // 判断是否记住登录状态
+      // 记住登录
+      localStorage.token = response.data.access
+    }else{
+      // 不记住登录，关闭浏览器以后就删除状态
+      sessionStorage.token = response.data.access;
+    }
+    // 保存token，并根据用户的选择，是否记住密码
+    // 成功提示
+    ElMessage.success("登录成功！");
+    console.log("登录成功！");
+  }).catch(error => {
+    console.log(error);
+  })
+}
 </script>
 
 <template>
   <div class="title">
-    <span :class="{active:state.login_type==0}" @click="state.login_type=0">密码登录</span>
-    <span :class="{active:state.login_type==1}" @click="state.login_type=1">短信登录</span>
+    <span :class="{active:user.login_type === 0}" @click="user.login_type=0">密码登录</span>
+    <span :class="{active:user.login_type === 1}" @click="user.login_type=1">短信登录</span>
   </div>
-  <div class="inp" v-if="state.login_type==0">
-    <input v-model="state.username" type="text" placeholder="用户名 / 手机号码" class="user">
-    <input v-model="state.password" type="password" class="pwd" placeholder="密码">
+  <div class="inp" v-if="user.login_type==0">
+    <input v-model="user.account" type="text" placeholder="用户名 / 手机号码" class="user">
+    <input v-model="user.password" type="password" class="pwd" placeholder="密码">
     <div id="geetest1"></div>
     <div class="rember">
       <label>
-        <input type="checkbox" class="no" name="a"/>
+        <input type="checkbox" class="no" v-model="user.remember"/>
         <span>记住密码</span>
       </label>
       <p>忘记密码</p>
     </div>
-    <button class="login_btn">登录</button>
+    <button class="login_btn" @click="loginhandler">登录</button>
     <p class="go_login">没有账号 <span>立即注册</span></p>
   </div>
-  <div class="inp" v-show="state.login_type==1">
-    <input v-model="state.username" type="text" placeholder="手机号码" class="user">
-    <input v-model="state.password" type="text" class="code" placeholder="短信验证码">
+  <div class="inp" v-show="user.login_type==1">
+    <input v-model="user.mobile" type="text" placeholder="手机号码" class="user">
+    <input v-model="user.code" type="text" class="code" placeholder="短信验证码">
     <el-button id="get_code" type="primary">获取验证码</el-button>
     <button class="login_btn">登录</button>
     <p class="go_login">没有账号 <span>立即注册</span></p>
