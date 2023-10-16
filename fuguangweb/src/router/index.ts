@@ -19,7 +19,7 @@ const routes: RouteRecordRaw[] = [
         },
         path: '/login',      // uri访问地址
         name: "Login",
-        component: () => import("../views/Login.vue")
+        component: () => import("../views/Login.vue")  // uri绑定的组件页面
     }
 ]
 
@@ -30,6 +30,15 @@ const router: Router = createRouter({
     // 路由列表
     routes,
 });
+
+// 客户端权限验证写在路由守卫里面
+// 服务端的验证，分2块，1块在客户端的axios附带token，另1块在api服务端的视图中调用permission
+
+router.beforeEach((to, from) => {
+    document.title = to.meta.title
+    // 返回 false 以取消导航
+    // return false
+})
 
 
 // 暴露路由对象

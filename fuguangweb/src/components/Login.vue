@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import user from "../api/user";
 import {ElMessage} from 'element-plus'
+import {useStore} from "vuex"
+
+const store = useStore()
 
 const emit = defineEmits(["login_success",])
 
@@ -29,6 +32,13 @@ const loginhandler = () => {
       // 不记住登录，关闭浏览器以后就删除状态
       sessionStorage.token = response.data.access;
     }
+
+    // vuex存储用户登录信息，保存token，并根据用户的选择，是否记住密码
+    let payload = response.data.access.split(".")[1]  // 载荷
+    let payload_data = JSON.parse(atob(payload)) // 用户信息
+    console.log(payload_data)
+    store.commit("login", payload_data)
+
     // 保存token，并根据用户的选择，是否记住密码
     // 成功提示
     ElMessage.success("登录成功！");
@@ -38,6 +48,8 @@ const loginhandler = () => {
     user.mobile = ""
     user.code = ""
     user.remember = false
+
+
     emit("login_success")
   }).catch(error => {
     ElMessage.error("登录异常！")

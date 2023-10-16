@@ -282,12 +282,22 @@ REST_FRAMEWORK = {
 }
 
 import datetime
-# jwt认证相关配置项
-JWT_AUTH = {
-    # 设置jwt的有效期
-    # 如果内部站点，例如：运维开发系统，OA，往往配置的access_token有效期基本就是15分钟，30分钟，1~2个小时
-    'JWT_EXPIRATION_DELTA': datetime.timedelta(weeks=1), # 一周有效，
+# # jwt认证相关配置项
+# JWT_AUTH = {
+#     # 设置jwt的有效期
+#     # 如果内部站点，例如：运维开发系统，OA，往往配置的access_token有效期基本就是15分钟，30分钟，1~2个小时
+#     'JWT_EXPIRATION_DELTA': datetime.timedelta(weeks=1), # 一周有效，
+# }
+
+SIMPLE_JWT = {
+    # token有效时长(返回的 access 有效时长)
+    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(seconds=30),
+    # token刷新的有效时间(返回的 refresh 有效时长)
+    'REFRESH_TOKEN_LIFETIME': datetime.timedelta(seconds=20),
+    "TOKEN_OBTAIN_SERIALIZER": "fuguangapi.utils.authenticate.MyTokenObtainPairSerializer",
 }
+
+
 
 # CORS的配置信息:
 # 方案1：
@@ -326,3 +336,6 @@ CORS_ALLOW_ALL_ORIGINS = True
 # `AUTH_USER_MODEL` 参数的设置以`点.`来分隔，表示`应用名.模型类名`。
 # 注意：Django建议我们对于AUTH_USER_MODEL参数的设置一定要在第一次数据库迁移之前就设置好，否则后续使用可能出现未知错误。
 AUTH_USER_MODEL = 'users.User'
+
+# django自定义认证
+AUTHENTICATION_BACKENDS = ['fuguangapi.utils.authenticate.CustomAuthBackend', ]

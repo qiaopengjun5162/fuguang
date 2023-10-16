@@ -1,9 +1,13 @@
 <script setup lang="ts">
 import nav from "../api/nav";
 import Login from "./Login.vue"
+import {useStore} from "vuex"
+
+const store = useStore()
 
 const state = reactive({
   show_login: false,
+  // is_login: false,    // 登录状态
 })
 
 // 获取头部导航
@@ -14,7 +18,8 @@ nav.get_header_nav().then(response => {
 });
 
 // 用户登录成功以后的处理
-const login_success = ()=>{
+const login_success = () => {
+  // 关闭窗口
   state.show_login = false
 }
 </script>
@@ -43,7 +48,30 @@ const login_success = ()=>{
           </div>
           <div class="showhide-search" data-show="no"><img class="imv2-search2" src="../assets/search.svg"/></div>
         </div>
-        <div class="login-bar">
+        <div class="login-bar logined-bar" v-if="store.state.user.user_id">
+          <div class="shop-cart ">
+            <img src="../assets/cart.svg" alt=""/>
+            <span><router-link to="/cart">购物车</router-link></span>
+          </div>
+          <div class="login-box ">
+            <router-link to="">我的课堂</router-link>
+            <el-dropdown>
+                <span class="el-dropdown-link">
+                  <el-avatar class="avatar" size="50"
+                             src="https://fuguangapi.oss-cn-beijing.aliyuncs.com/avatar.jpg"></el-avatar>
+                </span>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item icon="el-icon-user">学习中心</el-dropdown-item>
+                  <el-dropdown-item icon="el-icon-edit-outline">订单列表</el-dropdown-item>
+                  <el-dropdown-item icon="el-icon-setting">个人设置</el-dropdown-item>
+                  <el-dropdown-item icon="el-icon-position">注销登录</el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
+          </div>
+        </div>
+        <div class="login-bar" v-else>
           <div class="shop-cart full-left">
             <img src="../assets/cart.svg" alt=""/>
             <span><router-link to="/cart">购物车</router-link></span>
@@ -380,5 +408,34 @@ const login_success = ()=>{
 
 .header .login-bar .login-box span:hover {
   color: #000000;
+}
+
+.logined-bar {
+  margin-top: 0;
+  height: 72px;
+  line-height: 72px;
+}
+
+.header .logined-bar .shop-cart {
+  height: 32px;
+  line-height: 32px;
+}
+
+.logined-bar .login-box {
+  height: 72px;
+  line-height: 72px;
+  position: relative;
+}
+
+.logined-bar .el-avatar {
+  float: right;
+  position: absolute;
+  top: -24px;
+  left: 20px;
+  transition: transform .5s ease-in .1s
+}
+
+.logined-bar .el-avatar:hover {
+  transform: scale(1.3);
 }
 </style>
