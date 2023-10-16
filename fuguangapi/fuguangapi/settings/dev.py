@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
+    'rest_framework_simplejwt',
     'corsheaders', # cors跨域子应用
     # 'rest_framework_swagger',  # swagger接口文档
     'drf_yasg',  # 接口文档drf_yasg
@@ -261,7 +262,31 @@ LOGGING = {
 REST_FRAMEWORK = {
     # 自定义异常处理
     'EXCEPTION_HANDLER': 'fuguangapi.utils.exceptions.custom_exception_handler',
-    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema'
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
+    # 自定义认证
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        # 'rest_framework_jwt.authentication.JSONWebTokenAuthentication',  # jwt认证
+        # 'rest_framework.authentication.SessionAuthentication',  # session认证
+        # 'rest_framework.authentication.BasicAuthentication',
+
+        # https://django-rest-framework-simplejwt.readthedocs.io/en/latest/getting_started.html
+        # JWT认证:使用SimpleJWT库提供的JWTAuthentication类来进行认证
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        # session认证
+        'rest_framework.authentication.SessionAuthentication',
+        # 基本认证
+        'rest_framework.authentication.BasicAuthentication',
+
+
+    ),
+}
+
+import datetime
+# jwt认证相关配置项
+JWT_AUTH = {
+    # 设置jwt的有效期
+    # 如果内部站点，例如：运维开发系统，OA，往往配置的access_token有效期基本就是15分钟，30分钟，1~2个小时
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(weeks=1), # 一周有效，
 }
 
 # CORS的配置信息:
