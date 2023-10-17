@@ -20,6 +20,15 @@ const routes: RouteRecordRaw[] = [
         path: '/login',      // uri访问地址
         name: "Login",
         component: () => import("../views/Login.vue")  // uri绑定的组件页面
+    },
+    {
+        meta: {
+            title: "注册",
+            keepAlive: true
+        },
+        path: '/register',
+        name: "Register",            // 路由名称
+        component: () => import("../views/Register.vue"),         // uri绑定的组件页面
     }
 ]
 

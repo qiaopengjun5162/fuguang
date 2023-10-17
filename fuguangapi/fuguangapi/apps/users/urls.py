@@ -5,7 +5,7 @@
 @Software : PyCharm
 @File     : urls.py
 """
-from django.urls import path
+from django.urls import path, re_path
 # from rest_framework_jwt.views import obtain_jwt_token
 # from rest_framework_simplejwt.views import (
 #     TokenObtainPairView,
@@ -20,4 +20,5 @@ urlpatterns = [
     # path('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
 
     path("login/", views.LoginAPIView.as_view(), name="login"),
+    re_path("^mobile/(?P<mobile>1[3-9]\d{9})/$", views.MobileAPIView.as_view()),
 ]

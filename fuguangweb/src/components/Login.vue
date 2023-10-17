@@ -93,14 +93,14 @@ const loginhandler = (res) => {
       <p>忘记密码</p>
     </div>
     <button class="login_btn" @click="show_captcha">登录</button>
-    <p class="go_login">没有账号 <span>立即注册</span></p>
+    <p class="go_login">没有账号 <span><router-link to="/register">立即注册</router-link></span></p>
   </div>
   <div class="inp" v-show="user.login_type==1">
     <input v-model="user.mobile" type="text" placeholder="手机号码" class="user">
     <input v-model="user.code" type="text" class="code" placeholder="短信验证码">
     <el-button id="get_code" type="primary">获取验证码</el-button>
     <button class="login_btn">登录</button>
-    <p class="go_login">没有账号 <span>立即注册</span></p>
+    <p class="go_login">没有账号 <span><router-link to="/register">立即注册</router-link></span></p>
   </div>
 </template>
 

@@ -25,6 +25,7 @@ class TencentCloudAPI(object):
     def captcha(self, ticket, randstr, user_ip):
         """
         验证码校验工具方法
+        https://cloud.tencent.com/document/sdk/Python
         :ticket  客户端验证码操作成功以后得到的临时验证票据
         :randstr 客户端验证码操作成功以后得到的随机字符串
         :user_ip 客户端的IP地址
