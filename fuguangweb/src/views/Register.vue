@@ -1,23 +1,21 @@
 <script setup lang="ts">
 import {reactive, watch} from "vue"
 import user from '../api/user';
-import { ElMessage } from 'element-plus'
+import {ElMessage} from 'element-plus'
 import {useStore} from "vuex"
 import "../utils/TCaptcha"
-
+import settings from "../settings";
+import router from "../router";
 const store = useStore()
-
-const state = reactive({
-  password: "",    // 密码
-  re_password: "",// 确认密码
-  mobile: "",     // 手机号
-  code: "",       // 验证码
-})
 
 
 watch(
     () => user.mobile,
     ()=>{
+      // 如果没有填写手机号，则不需要验证
+      if(!user.mobile){
+        return false;
+      }
       if(!/^1[3-9]\d{9}$/.test(user.mobile)){
         ElMessage.error("手机号码格式不正确！");
       }else{
@@ -28,6 +26,77 @@ watch(
       }
     }
 )
+
+// 显示登录验证码
+const show_captcha = () => {
+  // 直接生成一个验证码对象。
+  let captcha1 = new TencentCaptcha(settings.captcha_app_id, (res) => {
+    // 验证码通过验证以后的回调方法
+    if (res && res.ret === 0) {
+      // 验证通过，发送登录请求
+      registerhandler(res)
+    }
+  });
+
+  // 显示验证码
+  captcha1.show();
+}
+
+const registerhandler = (res) => {
+  // 注册处理
+  if (!/^1[3-9]\d{9}$/.test(user.mobile)) {
+    // 错误提示
+    ElMessage.error('错了哦，手机号格式不正确！');
+    return false // 阻止代码继续往下执行
+  }
+
+  if (user.password.length < 6 || user.password.length > 16) {
+    ElMessage.error('错了哦，密码必须在6~16个字符之间！');
+    return false
+  }
+
+  if (user.password !== user.re_password) {
+    ElMessage.error('错了哦，密码和确认密码不一致！');
+    return false
+  }
+
+  // 发送请求
+  user.register({
+    mobile: user.mobile,
+    password: user.password,
+    re_password: user.re_password,
+    sms_code: user.sms_code,
+    // 验证码通过的票据信息
+    ticket: res.ticket,
+    randstr: res.randstr,
+  }).then(response => {
+
+    // 保存token，并根据用户的选择，是否记住密码
+    localStorage.removeItem("token");
+    sessionStorage.removeItem("token");
+
+    // 默认不需要记住登录
+    sessionStorage.token = response.data.token;
+
+    // vuex存储用户登录信息
+    let payload = response.data.token.split(".")[1]  // 载荷
+    let payload_data = JSON.parse(atob(payload)) // 用户信息
+    store.commit("login", payload_data)
+    // 清空表单信息
+    user.mobile = ""
+    user.password = ""
+    user.sms_code = ""
+    user.remember = false
+
+    // 成功提示
+    ElMessage.success("注册成功！");
+
+    // 路由跳转到首页
+    router.push("/");
+
+  })
+
+}
 </script>
 
 <template>
@@ -43,12 +112,12 @@ watch(
           <span class="active">用户注册</span>
         </div>
         <div class="inp">
-          <input v-model.lazy="user.mobile"  type="text" placeholder="手机号码" class="user">
-          <input v-model="state.password" type="password" placeholder="登录密码" class="user">
-          <input v-model="state.re_password" type="password" placeholder="确认密码" class="user">
-          <input v-model="state.code" type="text" class="code" placeholder="短信验证码">
+          <input v-model.lazy="user.mobile" type="text" placeholder="手机号码" class="user">
+          <input v-model="user.password" type="password" placeholder="登录密码" class="user">
+          <input v-model="user.re_password" type="password" placeholder="确认密码" class="user">
+          <input v-model="user.sms_code" type="text" class="code" placeholder="短信验证码">
           <el-button id="get_code" type="primary">获取验证码</el-button>
-          <button class="login_btn">注册</button>
+          <button class="login_btn" @click="show_captcha">注册</button>
           <p class="go_login">已有账号
             <router-link to="/login">立即登录</router-link>
           </p>

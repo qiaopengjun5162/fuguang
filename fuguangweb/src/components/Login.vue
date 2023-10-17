@@ -4,14 +4,14 @@ import {ElMessage} from 'element-plus'
 import {useStore} from "vuex"
 // https://turing.captcha.qcloud.com/TCaptcha.js
 import "../utils/TCaptcha";
+import settings from "../settings";
 
 const store = useStore()
-
 const emit = defineEmits(["login_success",])
 
 // 显示登录验证码
 const show_captcha = () => {
-  var captcha1 = new TencentCaptcha('192757306', (res) => {
+  var captcha1 = new TencentCaptcha(settings.captcha_app_id, (res) => {
     // 接收验证结果的回调函数
     /* res（验证成功） = {ret: 0, ticket: "String", randstr: "String"}
        res（客户端出现异常错误 仍返回可用票据） = {ret: 0, ticket: "String", randstr: "String", errorCode: Number, errorMessage: "String"}
@@ -67,8 +67,7 @@ const loginhandler = (res) => {
     user.code = ""
     user.remember = false
 
-
-    emit("login_success")
+    emit("login_success")  // 通知父组件登录成功了
   }).catch(error => {
     ElMessage.error("登录异常！")
     console.log(error);
