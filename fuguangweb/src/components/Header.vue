@@ -22,6 +22,11 @@ const login_success = () => {
   // 关闭窗口
   state.show_login = false
 }
+
+// 登录注销的处理
+const logout = ()=>{
+  store.commit("logout")
+}
 </script>
 
 <template>
@@ -65,7 +70,7 @@ const login_success = () => {
                   <el-dropdown-item icon="el-icon-user">学习中心</el-dropdown-item>
                   <el-dropdown-item icon="el-icon-edit-outline">订单列表</el-dropdown-item>
                   <el-dropdown-item icon="el-icon-setting">个人设置</el-dropdown-item>
-                  <el-dropdown-item icon="el-icon-position">注销登录</el-dropdown-item>
+                  <el-dropdown-item icon="el-icon-position" @click="logout">注销登录</el-dropdown-item>
                 </el-dropdown-menu>
               </template>
             </el-dropdown>

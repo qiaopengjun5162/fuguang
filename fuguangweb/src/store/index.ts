@@ -12,9 +12,35 @@ export default createStore({
           }
         }
     },
+    getters: {
+        getUserInfo(state){
+            let now = parseInt( (new Date() - 0) / 1000 );
+            if(state.user.exp === undefined) {
+                // 没登录
+                state.user = {}
+                localStorage.token = null;
+                sessionStorage.token = null;
+                return null
+            }
+
+            if(parseInt(state.user.exp) < now) {
+                // 过期处理
+                state.user = {}
+                localStorage.token = null;
+                sessionStorage.token = null;
+                return null
+            }
+            return state.user;
+        }
+    },
     mutations: { // 操作数据的方法，相当于methods
         login (state, user) {  // state 就是上面的state   state.user 就是上面的数据
           state.user = user
+        },
+        logout(state){ // 退出登录
+            state.user = {}
+            localStorage.token = null;
+            sessionStorage.token = null;
         }
     }
 })
