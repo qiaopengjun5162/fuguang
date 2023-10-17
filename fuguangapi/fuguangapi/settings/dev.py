@@ -339,3 +339,18 @@ AUTH_USER_MODEL = 'users.User'
 
 # django自定义认证
 AUTHENTICATION_BACKENDS = ['fuguangapi.utils.authenticate.CustomAuthBackend', ]
+
+# 腾讯云API接口配置
+TENCENTCLOUD = {
+    # 腾讯云访问秘钥ID
+    "SecretId":  os.getenv('SecretId'),
+    # 腾讯云访问秘钥key
+    "SecretKey":  os.getenv('SecretKey'),
+    # 验证码API配置
+    "Captcha": {
+        "endpoint":  os.getenv('Endpoint'), # 验证码校验服务端域名
+        "CaptchaType":  os.getenv('CaptchaType'),  # 验证码类型，固定为9
+        "CaptchaAppId":  os.getenv('CaptchaAppId'),  # 验证码应用ID
+        "AppSecretKey":  os.getenv('AppSecretKey'), # 验证码应用key
+    },
+}

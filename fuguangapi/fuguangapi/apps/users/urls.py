@@ -7,15 +7,17 @@
 """
 from django.urls import path
 # from rest_framework_jwt.views import obtain_jwt_token
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-)
+# from rest_framework_simplejwt.views import (
+#     TokenObtainPairView,
+#     TokenRefreshView,
+# )
 from . import views
 
 urlpatterns = [
     # obtain_jwt_token实际上就是 rest_framework_jwt.views.ObtainJSONWebToken.as_view()
     # path("login/", obtain_jwt_token, name="login"),
 
-    path('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    # path('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+
+    path("login/", views.LoginAPIView.as_view(), name="login"),
 ]

@@ -11,7 +11,7 @@ const emit = defineEmits(["login_success",])
 
 // 显示登录验证码
 const show_captcha = () => {
-  var captcha1 = new TencentCaptcha('192615716', (res) => {
+  var captcha1 = new TencentCaptcha('192757306', (res) => {
     // 接收验证结果的回调函数
     /* res（验证成功） = {ret: 0, ticket: "String", randstr: "String"}
        res（客户端出现异常错误 仍返回可用票据） = {ret: 0, ticket: "String", randstr: "String", errorCode: Number, errorMessage: "String"}
