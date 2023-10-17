@@ -6,6 +6,8 @@
 @File     : serializers.py
 """
 import re, constants
+from django.conf import settings
+from tencentcloudapi import TencentCloudAPI
 from rest_framework import serializers
 from rest_framework_jwt.settings import api_settings
 
@@ -19,10 +21,12 @@ class UserRegisterModelSerializer(serializers.ModelSerializer):
     re_password = serializers.CharField(required=True, write_only=True)
     sms_code = serializers.CharField(min_length=4, max_length=6, required=True, write_only=True)
     token = serializers.CharField(read_only=True)
+    ticket = serializers.CharField(write_only=True)
+    randstr = serializers.CharField(write_only=True)
 
     class Meta:
         model = User
-        fields = ["mobile", "password", "re_password", "sms_code", "token"]
+        fields = ["mobile", "password", "re_password", "sms_code", "token", "ticket", "randstr"]
         extra_kwargs = {
             "mobile": {
                 "required": True, "write_only": True
@@ -48,9 +52,21 @@ class UserRegisterModelSerializer(serializers.ModelSerializer):
         # 手机号是否已注册
         try:
             User.objects.get(mobile=mobile)
-            raise serializers.ValidationError(detail="手机号已注册！")
+            raise serializers.ValidationError(detail="手机号已注册！", code="mobile")
         except User.DoesNotExist:
             pass
+
+        # 验证腾讯云的滑动验证码
+        if not settings.IS_TEST:
+            api = TencentCloudAPI()
+            # 视图中的request对象，在序列化器中使用self.context["request"]
+            result = api.captcha(
+                data.get("ticket"),
+                self.context["request"]._request.META.get("REMOTE_ADDR"),
+                data.get("randstr"),
+            )
+            if not result:
+                raise serializers.ValidationError(detail="滑动验证码校验失败！", code="verify")
 
         # todo 验证短信验证码
 
