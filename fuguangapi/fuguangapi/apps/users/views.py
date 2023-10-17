@@ -1,15 +1,14 @@
 # from rest_framework_jwt.views import ObtainJSONWebToken
 import logging
-
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-)
-from fuguangapi.utils.tencentcloudapi import TencentCloudAPI, TencentCloudSDKException
-from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.generics import CreateAPIView
+from rest_framework_simplejwt.views import TokenObtainPairView
+from fuguangapi.utils.tencentcloudapi import TencentCloudAPI, TencentCloudSDKException
+
 from .models import User
+from .serializers import UserRegisterModelSerializer
 
 
 # Create your views here.
@@ -40,8 +39,6 @@ class LoginAPIView(TokenObtainPairView):
 
 
 # /users/mobile/(?P<mobile>1[3-9]\d{9})
-
-
 class MobileAPIView(APIView):
     def get(self, request, mobile):
         """
@@ -56,3 +53,8 @@ class MobileAPIView(APIView):
         except User.DoesNotExist:
             # 如果查不到该手机号的注册记录，则证明手机号可以注册使用
             return Response({"errmsg": "OK"}, status=status.HTTP_200_OK)
+
+
+class UserAPIView(CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserRegisterModelSerializer
