@@ -21,8 +21,8 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # 新增apps作为导包路径，导包路径默认保存sys.path属性中，所有的python的import或者from导包语句默认都是从sys.path中记录的路径下查找模块
-sys.path.insert(0, str( BASE_DIR / "apps") )
-sys.path.insert(0, str( BASE_DIR / "utils") )
+sys.path.insert(0, str(BASE_DIR / "apps"))
+sys.path.insert(0, str(BASE_DIR / "utils"))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -47,7 +47,7 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'rest_framework_simplejwt',
-    'corsheaders', # cors跨域子应用
+    'corsheaders',  # cors跨域子应用
     # 'rest_framework_swagger',  # swagger接口文档
     'drf_yasg',  # 接口文档drf_yasg
 
@@ -134,7 +134,7 @@ CACHES = {
         }
     },
     # 提供存储短信验证码
-    "sms_code":{
+    "sms_code": {
         "BACKEND": "django_redis.cache.RedisCache",
         "LOCATION": "redis://:123456@127.0.0.1:6379/2",
         "OPTIONS": {
@@ -277,11 +277,11 @@ REST_FRAMEWORK = {
         # 基本认证
         'rest_framework.authentication.BasicAuthentication',
 
-
     ),
 }
 
 import datetime
+
 # # jwt认证相关配置项
 # JWT_AUTH = {
 #     # 设置jwt的有效期
@@ -296,8 +296,6 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': datetime.timedelta(seconds=20),
     "TOKEN_OBTAIN_SERIALIZER": "fuguangapi.utils.authenticate.MyTokenObtainPairSerializer",
 }
-
-
 
 # CORS的配置信息:
 # 方案1：
@@ -343,14 +341,24 @@ AUTHENTICATION_BACKENDS = ['fuguangapi.utils.authenticate.CustomAuthBackend', ]
 # 腾讯云API接口配置
 TENCENTCLOUD = {
     # 腾讯云访问秘钥ID
-    "SecretId":  os.getenv('SecretId'),
+    "SecretId": os.getenv('SecretId'),
     # 腾讯云访问秘钥key
-    "SecretKey":  os.getenv('SecretKey'),
+    "SecretKey": os.getenv('SecretKey'),
     # 验证码API配置
     "Captcha": {
-        "endpoint":  os.getenv('Endpoint'), # 验证码校验服务端域名
-        "CaptchaType":  os.getenv('CaptchaType'),  # 验证码类型，固定为9
-        "CaptchaAppId":  os.getenv('CaptchaAppId'),  # 验证码应用ID
-        "AppSecretKey":  os.getenv('AppSecretKey'), # 验证码应用key
+        "endpoint": os.getenv('Endpoint'),  # 验证码校验服务端域名
+        "CaptchaType": os.getenv('CaptchaType'),  # 验证码类型，固定为9
+        "CaptchaAppId": os.getenv('CaptchaAppId'),  # 验证码应用ID
+        "AppSecretKey": os.getenv('AppSecretKey'),  # 验证码应用key
     },
+}
+
+# 容联云短信
+RONGLIANYUN = {
+    "accId": os.getenv('ACCOUNTSID'),
+    "accToken": os.getenv('AUTHTOKEN'),
+    "appId": os.getenv('AppID'),
+    "reg_tid": 1,  # 注册短信验证码的模板ID
+    "sms_expire": 300,  # 短信有效期，单位：秒(s)
+    "sms_interval": 60,  # 短信发送的冷却时间，单位：秒(s)
 }

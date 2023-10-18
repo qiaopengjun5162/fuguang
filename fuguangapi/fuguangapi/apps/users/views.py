@@ -1,13 +1,17 @@
 # from rest_framework_jwt.views import ObtainJSONWebToken
+import random
 import logging
+from django.conf import settings
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from django_redis import get_redis_connection
 from rest_framework.generics import CreateAPIView
 from rest_framework_simplejwt.views import TokenObtainPairView
 from fuguangapi.utils.tencentcloudapi import TencentCloudAPI, TencentCloudSDKException
 
 from .models import User
+from ronglianyunapi import send_sms
 from .serializers import UserRegisterModelSerializer
 
 
@@ -58,3 +62,47 @@ class MobileAPIView(APIView):
 class UserAPIView(CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserRegisterModelSerializer
+
+
+"""
+/users/sms/(?P<mobile>1[3-9]\d{9})
+"""
+
+
+class SMSAPIView(APIView):
+    def get(self, request, mobile):
+        """
+        发送短信验证码
+        :param request:
+        :param mobile:
+        :return:
+        """
+        redis = get_redis_connection("sms_code")
+
+        # 判断手机短信是否处于发送冷却中[60秒只能发送一条]
+        interval = redis.ttl(f"interval_{mobile}")
+        if interval != -2:
+            return Response(
+                {"errmsg": f"短信发送过于频繁，请{interval}秒后再次点击获取!"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # 基于随机数生成短信验证码
+        # code = "%06d" % random.randint(0, 999999)
+        code = f"{random.randint(0, 999999):06d}"
+        # 短信有效期
+        time = settings.RONGLIANYUN.get("sms_expire")
+        # 短信发送间隔时间
+        sms_interval = settings.RONGLIANYUN["sms_interval"]
+        # 调用第三方sdk发送短信
+        send_sms(settings.RONGLIANYUN.get("reg_tid"), mobile, datas=(code, time // 60))
+
+        # 记录code到redis中，并以time作为有效期
+        # 使用redis提供的管道对象pipeline来优化redis的写入操作[添加/修改/删除]
+        pipe = redis.pipeline()
+        pipe.multi()  # 开启事务
+        pipe.setex(f"sms_{mobile}", time, code)
+        pipe.setex(f"interval_{mobile}", sms_interval, "_")
+        pipe.execute()  # 提交事务，同时把暂存在pipeline的数据一次性提交给redis
+
+        return Response({"errmsg": "OK"}, status=status.HTTP_200_OK)
